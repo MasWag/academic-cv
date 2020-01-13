@@ -1,9 +1,53 @@
 % -*- coding: utf-8 -*-
 @import: cv
+@require: itemize
+@require: table
 
 document (|
   name = `John Smith`;
   |) '<
   +section{Research Interests} <
+  +listing {
+  * hoge
+  }
   >
->
+  +section{Education} <
+    +tabbedblock [
+      ({2004-2007}, '<+p {
+        BSc Hons in Computer Science - The University of California, Berkeley
+      }>);
+      ({2001-2003}, '<
+        +p{
+          Very great school, Tokyo, Japan
+        }
+        +p {
+        \tabular(fun t -> (
+        let (c, l, r) = (t#c, t#l, t#r) in
+          [
+           [l {Automata Theory}; l {A};];
+           [l {Analysis of Hybrid Automata}; l {B};];
+          ] ))(fun xs ys -> ([]));
+      }>);
+    ];
+   >
+
+  +section{Employment History} <
+    +tabbedblock [
+      ({Sep 2011-Present}, '<+p {
+        BSc Hons in Computer Science - The University of California, Berkeley
+      }>);
+      ({2001-2003}, '<
+        +p{
+          Very great school, Tokyo, Japan
+        }
+        +p {
+        \tabular(fun t -> (
+        let (c, l, r) = (t#c, t#l, t#r) in
+          [
+           [l {Automata Theory}; l {A};];
+           [l {Analysis of Hybrid Automata}; l {B};];
+          ] ))(fun xs ys -> ([]));
+      }>);
+    ];
+   >
+ >

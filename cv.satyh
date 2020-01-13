@@ -59,6 +59,7 @@ module CV : sig
   direct \dfn : [inline-text] inline-cmd
   direct \roman : [inline-text] inline-cmd
   direct \footnote : [inline-text] inline-cmd
+  direct +tabbedblock : [(inline-text * block-text) list] block-cmd
 
 end = struct
 
@@ -454,6 +455,35 @@ end = struct
   let promote-another-trial () =
     register-cross-reference `changed` `T`
 
+  let (+++>) = List.fold-left (+++)
+
+  let tabbedblock ctx indent pairlst =
+    let bclst =
+      pairlst |> List.map (fun (item, descr) -> (
+        let br-item =
+          let ctx-item =
+            ctx |> set-font Latin font-latin-bold
+          in
+            read-inline ctx-item item
+        in
+        let br-descr = read-block ctx descr in
+        let br-item-pbox = 
+        embed-block-top ctx indent (fun ctx ->
+            form-paragraph ctx (br-item ++ inline-fil)) in      
+        let br-pbox =
+          embed-block-top ctx ((get-text-width ctx) -' indent) (fun ctx ->
+%            form-paragraph ctx (
+br-descr %++ inline-fil)
+        )
+        in
+          form-paragraph ctx (br-item-pbox ++ br-pbox)
+      ))
+    in
+      block-nil +++> bclst
+
+  let-block ctx +tabbedblock pairlst =
+    let indent = 42pt in
+      tabbedblock ctx indent pairlst
 
   let-inline ctx \footnote it =
     let ibf num =
@@ -489,6 +519,5 @@ end = struct
       FootnoteScheme.main ctx ibf bbf
 
 end
-
 
 let document = CV.document
