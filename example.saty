@@ -1,0 +1,9 @@
+% -*- coding: utf-8 -*-
+@import: cv
+
+document (|
+  name = `John Smith`;
+  |) '<
+  +section{Research Interests} <
+  >
+>
