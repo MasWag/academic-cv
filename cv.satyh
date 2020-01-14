@@ -8,6 +8,34 @@
 @require: vdecoset
 @require: footnote-scheme
 
+type bib-in-proceedings =
+  (|
+    author    : inline-text list;
+    title     : inline-text;
+    booktitle : inline-text;
+    series    : inline-text option;
+    volume    : int option;
+    number    : inline-text option;
+    pages     : int * int;
+    year      : int;
+  |)
+
+type bib-article =
+  (|
+    author  : inline-text list;
+    title   : inline-text;
+    journal : inline-text;
+    volume  : int option;
+    number  : inline-text option;
+    pages   : int * int;
+    year    : int;
+  |)
+
+type bib-item =
+  | InProceedings of bib-in-proceedings
+  | Article       of bib-article
+
+
 let string-to-int str =
     let-rec string-to-list-args str ls =
       match string-length str with
@@ -51,15 +79,17 @@ module CV : sig
   val get-cjk-font-size : context -> length
   direct \index : [string; inline-text?; inline-text] inline-cmd
   direct \cite : [string list] inline-cmd
+  direct +p-noindent : [inline-text] block-cmd
   direct +p : [inline-text] block-cmd
 
-  direct +section : [string?; inline-text; block-text] block-cmd
+  direct +section : [inline-text; block-text] block-cmd
   direct +subsection : [string?; inline-text; block-text] block-cmd
   direct \emph : [inline-text] inline-cmd
   direct \dfn : [inline-text] inline-cmd
   direct \roman : [inline-text] inline-cmd
   direct \footnote : [inline-text] inline-cmd
   direct +tabbedblock : [(inline-text * block-text) list] block-cmd
+  direct +publications : [(bib-item) list] block-cmd
 
 end = struct
 
@@ -283,7 +313,7 @@ end = struct
   let side-margin = 25mm
   let paper-size = UserDefinedPaper(paper-width, paper-height)
   let text-origin = (side-margin, top-margin)
-  let text-width = paper-width -' side-margin -' side-margin
+  let text-width = paper-width -' (side-margin *' 2.0)
   let text-height = paper-height -' top-margin -' bottom-margin
   let header-origin = (side-margin, top-margin)
   let header-width = text-width
@@ -291,7 +321,7 @@ end = struct
   let footer-width = text-width
   let footnote-indent = 6mm
 
-  let section-scheme ctx label title inner =
+  let section-scheme ctx title inner =
     let ctx-title = make-section-title ctx in
     let ib-title = read-inline ctx-title title in
     let bb-title = section-heading ctx (ib-title ++ (inline-fil)) in
@@ -411,18 +441,17 @@ end = struct
       page-break page pagecontf pagepartsf (bb-title +++ bb-main)
 
 
+  let-block ctx +p-noindent inner =
+    let ib-inner = read-inline ctx inner ++ inline-fil in
+      form-paragraph ctx ib-inner
+
   let-block ctx +p inner =
     let len = get-font-size ctx *' font-ratio-cjk in
     let ib-inner = inline-skip len ++ read-inline ctx inner ++ inline-fil in
       form-paragraph ctx ib-inner
 
-  let-block ctx +section ?:labelopt title inner =
-    let label =
-      match labelopt with
-      | None        -> generate-fresh-label ()
-      | Some(label) -> label
-    in
-      section-scheme ctx label title inner
+  let-block ctx +section title inner =
+      section-scheme ctx title inner
 
 
   let-block ctx +subsection ?:labelopt title inner =
@@ -466,23 +495,19 @@ end = struct
           in
             read-inline ctx-item item
         in
-        let br-descr = read-block ctx descr in
         let br-item-pbox = 
-        embed-block-top ctx indent (fun ctx ->
+          embed-block-top ctx indent (fun ctx ->
             form-paragraph ctx (br-item ++ inline-fil)) in      
         let br-pbox =
-          embed-block-top ctx ((get-text-width ctx) -' indent) (fun ctx ->
-%            form-paragraph ctx (
-br-descr %++ inline-fil)
-        )
+          embed-block-top ctx (text-width -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
         in
-          form-paragraph ctx (br-item-pbox ++ br-pbox)
+          form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
       ))
     in
       block-nil +++> bclst
 
   let-block ctx +tabbedblock pairlst =
-    let indent = 42pt in
+    let indent = 50pt in
       tabbedblock ctx indent pairlst
 
   let-inline ctx \footnote it =
@@ -518,6 +543,43 @@ br-descr %++ inline-fil)
     in
       FootnoteScheme.main ctx ibf bbf
 
+    let-rec fold-authors authors-text authors-list = 
+    match authors-list with
+    | [] -> authors-text
+    | author :: [] -> {#authors-text;, #author;}
+    | author :: xs -> fold-authors {#authors-text;, #author;} xs
+
+    let bib2block bib = 
+    match bib with
+    | InProceedings(p) -> 
+      let authors = 
+        match p#author with
+        | [] -> {}
+        | author :: [] -> {#author;}
+        | author :: xs -> fold-authors {#author;} xs in
+      let title = p#title in
+      let booktitle = p#booktitle in
+      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}}>)
+    | Article(p) -> 
+      let authors = 
+        match p#author with
+        | [] -> {}
+        | author :: [] -> {#author;}
+        | author :: xs -> fold-authors {#author;} xs in
+      let title = p#title in
+      let journal = p#journal in
+      (arabic p#year |> embed-string,'<+p-noindent{#authors;.}>)
+
+type bib-item =
+  | InProceedings of bib-in-proceedings
+  | Article       of bib-article
+
+    let-block ctx +publications publist = 
+      let indent = 50 in
+      let pairlst = List.map bib2block publist in
+      section-scheme ctx {Publications} '<
+        +tabbedblock (pairlst);
+      >
 end
 
 let document = CV.document
