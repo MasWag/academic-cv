@@ -89,6 +89,8 @@ module CV : sig
   direct \roman : [inline-text] inline-cmd
   direct \footnote : [inline-text] inline-cmd
   direct +tabbedblock : [(inline-text * block-text) list] block-cmd
+  direct +description : [(inline-text * inline-text) list] block-cmd
+  direct +twocolumn : [block-text; block-text] block-cmd
   direct +publications : [(bib-item) list] block-cmd
 
 end = struct
@@ -366,6 +368,7 @@ end = struct
         |> set-font-size 10pt
         |> set-leading 18pt
         |> set-hyphen-penalty 1000
+        |> set-paragraph-margin 7pt 7pt
     in
 
     % -- title --
@@ -373,14 +376,14 @@ end = struct
       let ctx-title =
         ctx-doc
         |> set-font Latin font-latin-bold
-          |> set-font-size 20.74pt
-          |> set-text-color slateblue
+        |> set-font-size 20.74pt
+        |> set-text-color slateblue
       in
       let leftf ctx it =
         line-break true true ctx
           (read-inline ctx it ++ inline-fil)
       in
-       (leftf ctx-title (embed-string title)) +++ (leftf ctx-doc {\rule(text-width)(0.5mm)(0pt)(20pt);})
+       (leftf ctx-title (embed-string title)) +++ (leftf ctx-doc {\rule(text-width)(0.5mm)(0pt)(5.0pt);})
     in
 
     % -- main --
@@ -499,7 +502,7 @@ end = struct
           embed-block-top ctx indent (fun ctx ->
             form-paragraph ctx (br-item ++ inline-fil)) in      
         let br-pbox =
-          embed-block-top ctx (text-width -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
+          embed-block-top ctx ((get-text-width ctx) -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
         in
           form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
       ))
@@ -509,6 +512,39 @@ end = struct
   let-block ctx +tabbedblock pairlst =
     let indent = 50pt in
       tabbedblock ctx indent pairlst
+
+  let description ctx pairlst =
+    let indent = 24pt in
+    let bclst =
+      pairlst |> List.map (fun (item, descr) -> (
+        let br-item =
+          let ctx-item =
+            ctx |> set-font Latin font-latin-bold
+          in
+            read-inline ctx-item item
+        in
+        let br-descr = read-inline ctx descr in
+        let br-pbox =
+          embed-block-top ctx ((get-text-width ctx) -' indent) (fun ctx ->
+            form-paragraph ctx ((inline-skip (0pt -' indent)) ++ br-item ++ (inline-skip 8pt) ++ br-descr ++ inline-fil)
+          )
+        in
+          form-paragraph ctx ((inline-skip indent) ++ br-pbox)
+      ))
+    in
+    block-nil +++> bclst
+
+  let-block ctx +description pairlst =
+    description ctx pairlst
+
+  let-block ctx +twocolumn left-block right-block =
+    let margin = ((get-font-size ctx) *' 3.0) in
+    let column-width = ((get-text-width ctx) -' margin) *' 0.5 in
+    let br-left-pbox =
+      embed-block-top ctx column-width (fun ctx -> read-block ctx left-block) in
+    let br-right-pbox =
+      embed-block-top ctx column-width (fun ctx -> read-block ctx right-block) in
+    form-paragraph ctx (br-left-pbox ++ (inline-skip margin) ++ br-right-pbox)
 
   let-inline ctx \footnote it =
     let ibf num =
@@ -569,10 +605,6 @@ end = struct
       let title = p#title in
       let journal = p#journal in
       (arabic p#year |> embed-string,'<+p-noindent{#authors;.}>)
-
-type bib-item =
-  | InProceedings of bib-in-proceedings
-  | Article       of bib-article
 
     let-block ctx +publications publist = 
       let indent = 50 in
