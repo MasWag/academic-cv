@@ -65,17 +65,7 @@ document (|
     ];
    >
 
-  +publications [(InProceedings(|
-    author = {|Masaki Waga, Ichiro Hasuo, Kohei Suenaga|};
-    title = {Efficient Online Timed Pattern Matching by Automata-Based Skipping};
-    booktitle = {Proc. 15th International Conference on Formal Modelling and Analysis of Timed Systems (FORMATS 2017)};
-    series = Some {LNCS}; 
-    volume = None; 
-    number = None; 
-    pages = (254,263);
-    year = 2017;
-  |));
-  ];
+  +publications(bibliography);
   +section{Employment History} <
     +tabbedblock [
       ({Sep 2011-Now}, '<+p {
