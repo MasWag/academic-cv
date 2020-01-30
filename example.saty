@@ -5,5 +5,8 @@ document (|
   name = `John Smith`;
   |) '<
   +section{Research Interests} <
+  +listing-with-gap(0pt){
+    * \bold{Lightweight verification} of \emph{Cyber-physical systems}.
+  }
   >
 >
