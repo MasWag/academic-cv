@@ -1,0 +1,98 @@
+% -*- coding: utf-8 -*-
+@import: cv
+@require: itemize
+@require: table
+@require: annot
+@import: bib
+
+document (|
+  name = `Masaki Waga`;
+  |) '<
+  +twocolumn <
+  +description [
+    ({Work Address}, {
+    ERATO Hasuo Project
+    Palace Side Building 3F
+    Hitotsubashi 1-1-1, Chiyoda-ku,
+    Tokyo 100-1003, Japan});
+    ({Home Address}, {
+    1-60-22 Toro-Cho, Kita-Ku, Saitama-Shi
+    Saitama-Ken, 331-0804, Japan});
+  ];
+  > <
+  +description [
+    ({Date of Birth}, {
+    ${18^{th}} August 1992});
+    ({Nationality}, {
+    Japan});
+    ({Phone}, {
+    +81 70 2151 8092});
+    ({Email}, {
+    \href(`mailto:mwaga@nii.ac.jp`){mwaga\@nii.ac.jp}});
+    ];
+  >
+  +section{Research Interests} <
+  +listing {
+  * Lightweight verification of Cyber-physical systems
+  * In particular, runtime verification of real-time systems with timed automata
+  * Other related problems e.g., falsification, runtime enforcement, and specification learning
+  }
+  >
+  +section{Education} <
+    +tabbedblock [
+      ({2018-Now}, '<+p-noindent {
+        Ph.D. student (major in Informatics) - The Graduate University for Advanced Studies (SOKENDAI), Tokyo, Japan
+        \listing {
+          * Advisor: Ichiro Hasuo
+        }
+      }>);
+      ({2016-2018}, '<
+        +p-noindent{
+          MSc (major in Computer Science) - Graduate School of Information Science and Technology, The University of Tokyo , Tokyo, Japan
+          \listing {
+            * Advisor: Ichiro Hasuo
+            * Thesis: Techniques for Efficient Timed Pattern Matching
+          }
+        }>);
+      ({2012-2016}, '<
+        +p-noindent{
+          BSc (major in Information Science) - School of Science, The University of Tokyo, Tokyo, Japan
+          \listing {
+            * Advisor: Ichiro Hasuo
+            * Thesis: Timed Pattern Matching with Automata
+          }
+        }>);
+    ];
+   >
+
+  +publications [(InProceedings(|
+    author = {|Masaki Waga, Ichiro Hasuo, Kohei Suenaga|};
+    title = {Efficient Online Timed Pattern Matching by Automata-Based Skipping};
+    booktitle = {Proc. 15th International Conference on Formal Modelling and Analysis of Timed Systems (FORMATS 2017)};
+    series = Some {LNCS}; 
+    volume = None; 
+    number = None; 
+    pages = (254,263);
+    year = 2017;
+  |));
+  ];
+  +section{Employment History} <
+    +tabbedblock [
+      ({Sep 2011-Now}, '<+p {
+        BSc Hons in Computer Science - The University of California, Berkeley
+      }>);
+      ({2001-2003}, '<
+        +p{
+          Very great school, Tokyo, Japan
+        }
+        +p {
+        \tabular(fun t -> (
+        let (c, l, r) = (t#c, t#l, t#r) in
+          [
+           [l {Automata Theory}; l {A};];
+           [l {Analysis of Hybrid Automata}; l {B};];
+          ] ))(fun xs ys -> ([]));
+      }>);
+    ];
+   >
+ >

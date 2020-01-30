@@ -91,7 +91,7 @@ module CV : sig
   direct +tabbedblock : [(inline-text * block-text) list] block-cmd
   direct +description : [(inline-text * inline-text) list] block-cmd
   direct +twocolumn : [block-text; block-text] block-cmd
-  direct +publications : [(bib-item) list] block-cmd
+  direct +publications : [bib-item list] block-cmd
 
 end = struct
 
