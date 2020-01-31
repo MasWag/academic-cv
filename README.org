@@ -1,1 +1,2 @@
-* TODO replace @ to \@ in xslt
+* DONE replace @ to \@ in xslt
+* TODO Reformat the bibliographies

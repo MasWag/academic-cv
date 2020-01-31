@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   DBLP2SATySFi.xsl
-   Copyright (C) 2018 Masaki Waga
+   makeBib.xsl
+   Copyright (C) 2020 Masaki Waga
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
     USAGE
-      saxon -xslt:fromRaw.xsl MasakiWaga.raw.xml
+      saxon -xslt:makeBib.xsl MasakiWaga.xml
     NOTE
       I tested this xslt code using saxson
 -->
