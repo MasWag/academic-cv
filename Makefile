@@ -1,4 +1,4 @@
-cv_2020_Spring.pdf: cv_2020_Spring.saty bib.satyh
+cv_2020_Spring.pdf: cv_2020_Spring.saty bib.satyh cv.satyh
 	satysfi $<
 
 bib.satyh: bib.satyh.head bib.satyh.body

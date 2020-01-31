@@ -594,8 +594,13 @@ end = struct
         | author :: [] -> {#author;}
         | author :: xs -> fold-authors {#author;} xs in
       let title = p#title in
-      let booktitle = p#booktitle in
-      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}}>)
+      let rawBooktitle = p#booktitle in
+      let year = (arabic p#year) |> embed-string in
+      let booktitle = {Proc. #rawBooktitle; #year;} in 
+      let (begin-page-int, end-page-int) = p#pages in 
+      let begin-page = embed-string (arabic begin-page-int) in
+      let end-page = embed-string (arabic end-page-int) in
+      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}: #begin-page;-#end-page;.}>)
     | Article(p) -> 
       let authors = 
         match p#author with
@@ -604,7 +609,15 @@ end = struct
         | author :: xs -> fold-authors {#author;} xs in
       let title = p#title in
       let journal = p#journal in
-      (arabic p#year |> embed-string,'<+p-noindent{#authors;.}>)
+      let volume = match p#volume with
+          | Some(volume) -> embed-string (arabic volume) 
+          | None -> {} in
+      let number = Option.from {} p#number in
+      let (begin-page-int, end-page-int) = p#pages in 
+      let begin-page = embed-string (arabic begin-page-int) in
+      let end-page = embed-string (arabic end-page-int) in
+      let year = (arabic p#year) |> embed-string in
+      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#journal;} #volume;.#number; (#year;): #begin-page;-#end-page;.} >)
 
     let-block ctx +publications publist = 
       let indent = 50 in
