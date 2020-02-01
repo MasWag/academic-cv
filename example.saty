@@ -7,8 +7,8 @@ document (|
   name = `John Smith`;
   |) '<
   +section{Research Interests} <
-  +listing {
-  * hoge
+  +listing-with-gap(0pt){
+    * \bold{Lightweight verification} of \emph{Cyber-physical systems}.
   }
   >
   +section{Education} <

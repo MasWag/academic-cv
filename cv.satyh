@@ -85,6 +85,7 @@ module CV : sig
   direct +section : [inline-text; block-text] block-cmd
   direct +subsection : [string?; inline-text; block-text] block-cmd
   direct \emph : [inline-text] inline-cmd
+  direct \bold : [inline-text] inline-cmd
   direct \dfn : [inline-text] inline-cmd
   direct \roman : [inline-text] inline-cmd
   direct \footnote : [inline-text] inline-cmd
@@ -93,6 +94,10 @@ module CV : sig
   direct +twocolumn : [block-text; block-text] block-cmd
   direct +publications : [bib-item list] block-cmd
 
+  direct +listing-with-gap : [bool?; length; itemize] block-cmd
+  direct \listing-with-gap : [bool?; length; itemize] inline-cmd
+  direct +enumerate-with-gap : [length; itemize] block-cmd
+  direct \enumerate-with-gap : [length; itemize] inline-cmd
 end = struct
 
   let slateblue = Color.rgb 0.17 0.22 0.34
@@ -468,13 +473,20 @@ end = struct
 
   let-inline ctx \emph inner =
     let ctx-emph =
-      ctx |> set-font Latin font-latin-sans
+      ctx |> set-font Latin font-latin-italic
           |> set-cjk-font font-cjk-gothic
     in
       read-inline ctx-emph inner
 
   let-inline \dfn inner = {\emph{#inner;}}
 
+  let-inline ctx \bold inner =
+    let ctx-bold =
+      ctx |> set-font Latin font-latin-bold
+          |> set-cjk-font font-cjk-gothic
+    in
+      read-inline ctx-bold inner
+      
   let make-label prefix labelopt =
     match labelopt with
     | None    -> generate-fresh-label ()
@@ -625,6 +637,117 @@ end = struct
       section-scheme ctx {Publications} '<
         +tabbedblock (pairlst);
       >
+
+  let (+++>) = List.fold-left (+++)
+  let concat-blocks = (+++>) block-nil
+
+
+  let item-indent = 16pt
+  let item-gap = 10pt
+
+
+  let bullet color (x, y) =
+    let cx = x +' 4pt in
+    let cy = y +' 4pt in
+    let r = 2pt in
+      [ fill color (Gr.circle (cx, cy) r); ]
+
+
+  let-rec listing-item : context -> int -> itemize -> block-boxes
+    | ctx depth (Item(parent, children)) =
+        let color = get-text-color ctx in
+        let ib-bullet = inline-graphics 8pt 8pt 0pt (bullet color) ++ inline-skip 8pt in
+        let bullet-width = get-natural-width ib-bullet in
+        let parent-indent = item-indent *' (float depth) in
+        let ib-parent =
+          embed-block-top ctx ((get-text-width ctx) -' parent-indent -' bullet-width) (fun ctx ->
+            form-paragraph (ctx |> set-paragraph-margin item-gap item-gap)
+              (read-inline ctx parent ++ inline-fil)
+          )
+        in
+        let bb-parent =
+          form-paragraph (ctx |> set-paragraph-margin item-gap item-gap)
+            ((inline-skip parent-indent) ++ ib-bullet ++ ib-parent)
+        in
+        let bblst-children = List.map (listing-item ctx (depth + 1)) children in
+        bb-parent +++> bblst-children
+
+
+  let-rec listing-item-breakable
+    | ctx depth (Item(parent, children)) =
+        let color = get-text-color ctx in
+        let ib-bullet = inline-graphics 8pt 8pt 0pt (bullet color) ++ inline-skip 8pt in
+        let bullet-width = get-natural-width ib-bullet in
+        let parent-indent = item-indent *' (float depth) in
+        let pads = (parent-indent +' bullet-width, 0pt, 0pt, 0pt) in
+        let decos =
+          let deco _ _ _ _ = [] in
+          (deco, deco, deco, deco)
+        in
+        let bb-parent =
+          block-frame-breakable (ctx |> set-paragraph-margin item-gap item-gap) pads decos (fun ctx ->
+            form-paragraph ctx
+              (inline-skip (0pt -' bullet-width) ++ ib-bullet ++ read-inline ctx parent ++ inline-fil)
+          )
+        in
+        let bblst-children = List.map (listing-item-breakable ctx (depth + 1)) children in
+        bb-parent +++> bblst-children
+
+
+  let listing break ctx outer-gap (Item(_, itmzlst)) =
+    if break then
+      let bblst = List.map (listing-item-breakable ctx 0) itmzlst in
+      block-skip outer-gap +++ concat-blocks bblst +++ block-skip outer-gap
+    else
+      let bblst = List.map (listing-item ctx 0) itmzlst in
+      block-skip outer-gap +++ concat-blocks bblst +++ block-skip outer-gap
+
+
+  let-block ctx +listing-with-gap ?:breakopt outer-gap item =
+    let break = Option.from false breakopt in
+    listing break ctx outer-gap item
+
+
+  let-inline ctx \listing-with-gap ?:breakopt outer-gap item =
+    let break = Option.from false breakopt in
+      inline-fil ++ embed-block-breakable ctx (listing break ctx outer-gap item)
+        ++ omit-skip-after
+
+
+  let-rec enumerate-item : int -> context -> int -> itemize -> block-boxes
+    | index ctx depth (Item(parent, _)) =
+        let color = get-text-color ctx in
+        let parent-indent = item-indent *' (float depth) in
+        let ib-index =
+          let it-num = (embed-string (arabic index)) in
+            read-inline ctx {(#it-num;)\ }
+        in
+        let index-width = get-natural-width ib-index in
+        let ib-parent =
+          embed-block-top ctx ((get-text-width ctx) -' parent-indent -' index-width) (fun ctx ->
+            form-paragraph (ctx |> set-paragraph-margin item-gap item-gap)
+              (read-inline ctx parent ++ inline-fil)
+          )
+        in
+          form-paragraph (ctx |> set-paragraph-margin item-gap item-gap)
+            ((inline-skip parent-indent) ++ ib-index ++ ib-parent)
+
+
+  let enumerate ctx outer-gap (Item(_, itmzlst)) =
+    let bblst = List.mapi (fun i -> enumerate-item (i + 1) ctx 0) itmzlst in
+    concat-blocks bblst
+
+
+  let-block ctx +enumerate-with-gap outer-gap item =
+    enumerate ctx outer-gap item
+
+
+  let-inline ctx \enumerate-with-gap outer-gap item =
+    let bb = enumerate ctx outer-gap item in
+    inline-fil ++
+      embed-block-breakable ctx
+        (block-skip outer-gap +++ bb +++ block-skip outer-gap)
+      ++ omit-skip-after
 end
 
 let document = CV.document
