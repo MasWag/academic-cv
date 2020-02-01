@@ -89,7 +89,7 @@ module CV : sig
   direct \dfn : [inline-text] inline-cmd
   direct \roman : [inline-text] inline-cmd
   direct \footnote : [inline-text] inline-cmd
-  direct +tabbedblock : [(inline-text * block-text) list] block-cmd
+  direct +tabbedblock : [length?; (inline-text * block-text) list] block-cmd
   direct +description : [(inline-text * inline-text) list] block-cmd
   direct +twocolumn : [block-text; block-text] block-cmd
   direct +publications : [bib-item list] block-cmd
@@ -517,12 +517,16 @@ end = struct
           embed-block-top ctx ((get-text-width ctx) -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
         in
           form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
-      ))
+      ) +++ block-skip ((get-font-size ctx) *' 0.1))
     in
       block-nil +++> bclst
 
-  let-block ctx +tabbedblock pairlst =
-    let indent = 50pt in
+  let-block ctx +tabbedblock ?:indentopt pairlst =
+    let indent = 
+        match indentopt with
+        | None -> 50pt 
+        | Some(indent) -> indent
+    in
       tabbedblock ctx indent pairlst
 
   let description ctx pairlst =
@@ -612,7 +616,7 @@ end = struct
       let (begin-page-int, end-page-int) = p#pages in 
       let begin-page = embed-string (arabic begin-page-int) in
       let end-page = embed-string (arabic end-page-int) in
-      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}: #begin-page;-#end-page;.}>)
+      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}: #begin-page;-#end-page;.}>)
     | Article(p) -> 
       let authors = 
         match p#author with
@@ -629,14 +633,20 @@ end = struct
       let begin-page = embed-string (arabic begin-page-int) in
       let end-page = embed-string (arabic end-page-int) in
       let year = (arabic p#year) |> embed-string in
-      (arabic p#year |> embed-string,'<+p-noindent{#authors;. \`\`#title;'', In \book-title{#journal;} #volume;.#number; (#year;): #begin-page;-#end-page;.} >)
+      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#journal;} #volume;.#number; (#year;): #begin-page;-#end-page;.} >)
 
     let-block ctx +publications publist = 
-      let indent = 50 in
-      let pairlst = List.map bib2block publist in
-      section-scheme ctx {Publications} '<
-        +tabbedblock (pairlst);
-      >
+      let indent = 35pt in
+      let pairlstInt = List.map bib2block publist in
+      let removeDuplicatedYears (lst, latestYear) (year, it) =
+          if year <> latestYear then
+             ((arabic year |> embed-string, it) :: lst, year)
+          else
+             (({}, it) :: lst, year) in
+      let (revPairlst, _) = List.fold-left removeDuplicatedYears ([], 0) pairlstInt in
+        section-scheme ctx {Publications} '<
+          +tabbedblock ?:(indent) (List.reverse revPairlst);
+        >
 
   let (+++>) = List.fold-left (+++)
   let concat-blocks = (+++>) block-nil

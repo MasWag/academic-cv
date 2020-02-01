@@ -32,7 +32,7 @@ document (|
     ];
   >
   +section{Research Interests} <
-  +listing {
+  +listing-with-gap(0pt){
   * Lightweight verification of Cyber-physical systems
   * In particular, runtime verification of real-time systems with timed automata
   * Other related problems e.g., falsification, runtime enforcement, and specification learning
@@ -42,14 +42,14 @@ document (|
     +tabbedblock [
       ({2018-Now}, '<+p-noindent {
         Ph.D. student (major in Informatics) - The Graduate University for Advanced Studies (SOKENDAI), Tokyo, Japan
-        \listing {
+        \listing-with-gap(0pt) {
           * Advisor: Ichiro Hasuo
         }
       }>);
       ({2016-2018}, '<
         +p-noindent{
           MSc (major in Computer Science) - Graduate School of Information Science and Technology, The University of Tokyo , Tokyo, Japan
-          \listing {
+          \listing-with-gap(0pt) {
             * Advisor: Ichiro Hasuo
             * Thesis: Techniques for Efficient Timed Pattern Matching
           }
@@ -57,16 +57,14 @@ document (|
       ({2012-2016}, '<
         +p-noindent{
           BSc (major in Information Science) - School of Science, The University of Tokyo, Tokyo, Japan
-          \listing {
+          \listing-with-gap(0pt) {
             * Advisor: Ichiro Hasuo
             * Thesis: Timed Pattern Matching with Automata
           }
         }>);
     ];
    >
-
-  +publications(bibliography);
-  +section{Employment History} <
+  +section{Employment} <
     +tabbedblock [
       ({Sep 2011-Now}, '<+p {
         BSc Hons in Computer Science - The University of California, Berkeley
@@ -85,4 +83,10 @@ document (|
       }>);
     ];
    >
+  +section{Honors} <>
+  +section{Professional Activities} <>
+  +section{Software} <>
+
+  +publications(bibliography);
+  +section{Research Grants} <>
  >
