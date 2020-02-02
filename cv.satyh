@@ -246,7 +246,7 @@ end = struct
       inline-fil ++ (repeat-inline n ib)
 
 
-  let-mutable show-page-number-ref <- None
+  let-mutable show-page-number-ref <- Some(1)
 
 
   let bib-entry ctx cite-num ib-main =
@@ -501,153 +501,6 @@ end = struct
 
   let (+++>) = List.fold-left (+++)
 
-  let tabbedblock ctx indent pairlst =
-    let bclst =
-      pairlst |> List.map (fun (item, descr) -> (
-        let br-item =
-          let ctx-item =
-            ctx |> set-font Latin font-latin-bold
-          in
-            read-inline ctx-item item
-        in
-        let br-item-pbox = 
-          embed-block-top ctx indent (fun ctx ->
-            form-paragraph ctx (br-item ++ inline-fil)) in      
-        let br-pbox =
-          embed-block-top ctx ((get-text-width ctx) -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
-        in
-          form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
-      ) +++ block-skip ((get-font-size ctx) *' 0.1))
-    in
-      block-nil +++> bclst
-
-  let-block ctx +tabbedblock ?:indentopt pairlst =
-    let indent = 
-        match indentopt with
-        | None -> 50pt 
-        | Some(indent) -> indent
-    in
-      tabbedblock ctx indent pairlst
-
-  let description ctx pairlst =
-    let indent = 24pt in
-    let bclst =
-      pairlst |> List.map (fun (item, descr) -> (
-        let br-item =
-          let ctx-item =
-            ctx |> set-font Latin font-latin-bold
-          in
-            read-inline ctx-item item
-        in
-        let br-descr = read-inline ctx descr in
-        let br-pbox =
-          embed-block-top ctx ((get-text-width ctx) -' indent) (fun ctx ->
-            form-paragraph ctx ((inline-skip (0pt -' indent)) ++ br-item ++ (inline-skip 8pt) ++ br-descr ++ inline-fil)
-          )
-        in
-          form-paragraph ctx ((inline-skip indent) ++ br-pbox)
-      ))
-    in
-    block-nil +++> bclst
-
-  let-block ctx +description pairlst =
-    description ctx pairlst
-
-  let-block ctx +twocolumn left-block right-block =
-    let margin = ((get-font-size ctx) *' 3.0) in
-    let column-width = ((get-text-width ctx) -' margin) *' 0.5 in
-    let br-left-pbox =
-      embed-block-top ctx column-width (fun ctx -> read-block ctx left-block) in
-    let br-right-pbox =
-      embed-block-top ctx column-width (fun ctx -> read-block ctx right-block) in
-    form-paragraph ctx (br-left-pbox ++ (inline-skip margin) ++ br-right-pbox)
-
-  let-inline ctx \footnote it =
-    let ibf num =
-      let it-num = embed-string (arabic num) in
-      let ctx =
-        let size = get-font-size ctx in
-          ctx |> set-font-size (size *' 0.75)
-              |> set-manual-rising (size *' 0.25)
-      in
-        read-inline ctx {\*#it-num;}
-    in
-    let bbf num =
-      let ib-num = read-inline ctx (embed-string (arabic num)) in
-      let ctx =
-        let size = 12pt in
-          get-standard-context text-width
-            |> set-font-size (size *' 0.9)
-            |> set-leading (size *' 1.2)
-            |> set-paragraph-margin (size *' 0.5) (size *' 0.5)
-      in
-      let len =
-        let (w, _, _) = get-natural-metrics ib-num in
-          footnote-indent -' w
-      in
-      let ib =
-        ib-num ++ inline-skip len ++
-          embed-block-top ctx (text-width -' footnote-indent) (fun ctx -> (
-            line-break false false ctx (read-inline ctx it ++ inline-fil)
-          ))
-      in
-        line-break false false ctx (ib ++ inline-fil)
-    in
-      FootnoteScheme.main ctx ibf bbf
-
-    let-rec fold-authors authors-text authors-list = 
-    match authors-list with
-    | [] -> authors-text
-    | author :: [] -> {#authors-text;, #author;}
-    | author :: xs -> fold-authors {#authors-text;, #author;} xs
-
-    let bib2block bib = 
-    match bib with
-    | InProceedings(p) -> 
-      let authors = 
-        match p#author with
-        | [] -> {}
-        | author :: [] -> {#author;}
-        | author :: xs -> fold-authors {#author;} xs in
-      let title = p#title in
-      let rawBooktitle = p#booktitle in
-      let year = (arabic p#year) |> embed-string in
-      let booktitle = {Proc. #rawBooktitle; #year;} in 
-      let (begin-page-int, end-page-int) = p#pages in 
-      let begin-page = embed-string (arabic begin-page-int) in
-      let end-page = embed-string (arabic end-page-int) in
-      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}: #begin-page;-#end-page;.}>)
-    | Article(p) -> 
-      let authors = 
-        match p#author with
-        | [] -> {}
-        | author :: [] -> {#author;}
-        | author :: xs -> fold-authors {#author;} xs in
-      let title = p#title in
-      let journal = p#journal in
-      let volume = match p#volume with
-          | Some(volume) -> embed-string (arabic volume) 
-          | None -> {} in
-      let number = Option.from {} p#number in
-      let (begin-page-int, end-page-int) = p#pages in 
-      let begin-page = embed-string (arabic begin-page-int) in
-      let end-page = embed-string (arabic end-page-int) in
-      let year = (arabic p#year) |> embed-string in
-      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#journal;} #volume;.#number; (#year;): #begin-page;-#end-page;.} >)
-
-    let-block ctx +publications publist = 
-      let indent = 35pt in
-      let pairlstInt = List.map bib2block publist in
-      let removeDuplicatedYears (lst, latestYear) (year, it) =
-          if year <> latestYear then
-             ((arabic year |> embed-string, it) :: lst, year)
-          else
-             (({}, it) :: lst, year) in
-      let (revPairlst, _) = List.fold-left removeDuplicatedYears ([], 0) pairlstInt in
-        section-scheme ctx {Publications} '<
-          +tabbedblock ?:(indent) (List.reverse revPairlst);
-        >
-
   let (+++>) = List.fold-left (+++)
   let concat-blocks = (+++>) block-nil
 
@@ -758,6 +611,154 @@ end = struct
       embed-block-breakable ctx
         (block-skip outer-gap +++ bb +++ block-skip outer-gap)
       ++ omit-skip-after
+
+  let tabbedblock ctx indent pairlst =
+    let bclst =
+      pairlst |> List.map (fun (item, descr) -> (
+        let br-item =
+          let ctx-item =
+            ctx |> set-font Latin font-latin-bold
+          in
+            read-inline ctx-item item
+        in
+        let br-item-pbox = 
+          embed-block-top ctx indent (fun ctx ->
+            form-paragraph ctx (br-item ++ inline-fil)) in      
+        let br-pbox =
+          embed-block-top ctx ((get-text-width ctx) -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
+        in
+          form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
+      ) +++ block-skip ((get-font-size ctx) *' 0.1))
+    in
+      block-skip (5pt) +++> bclst
+
+  let-block ctx +tabbedblock ?:indentopt pairlst =
+    let indent = 
+        match indentopt with
+        | None -> 50pt 
+        | Some(indent) -> indent
+    in
+      tabbedblock ctx indent pairlst
+
+  let description ctx pairlst =
+    let indent = 24pt in
+    let bclst =
+      pairlst |> List.map (fun (item, descr) -> (
+        let br-item =
+          let ctx-item =
+            ctx |> set-font Latin font-latin-bold
+          in
+            read-inline ctx-item item
+        in
+        let br-descr = read-inline ctx descr in
+        let br-pbox =
+          embed-block-top ctx ((get-text-width ctx) -' indent) (fun ctx ->
+            form-paragraph ctx ((inline-skip (0pt -' indent)) ++ br-item ++ (inline-skip 8pt) ++ br-descr ++ inline-fil)
+          )
+        in
+          form-paragraph ctx ((inline-skip indent) ++ br-pbox)
+      ))
+    in
+    block-nil +++> bclst
+
+  let-block ctx +description pairlst =
+    description ctx pairlst
+
+  let-block ctx +twocolumn left-block right-block =
+    let margin = ((get-font-size ctx) *' 1.0) in
+    let left-column-width = ((get-text-width ctx) -' margin) *' 0.65 in
+    let right-column-width = ((get-text-width ctx) -' margin) *' 0.35 in
+    let br-left-pbox =
+      embed-block-top ctx left-column-width (fun ctx -> read-block ctx left-block) in
+    let br-right-pbox =
+      embed-block-top ctx right-column-width (fun ctx -> read-block ctx right-block) in
+    form-paragraph ctx (br-left-pbox ++ (inline-skip margin) ++ br-right-pbox)
+
+  let-inline ctx \footnote it =
+    let ibf num =
+      let it-num = embed-string (arabic num) in
+      let ctx =
+        let size = get-font-size ctx in
+          ctx |> set-font-size (size *' 0.75)
+              |> set-manual-rising (size *' 0.25)
+      in
+        read-inline ctx {\*#it-num;}
+    in
+    let bbf num =
+      let ib-num = read-inline ctx (embed-string (arabic num)) in
+      let ctx =
+        let size = 12pt in
+          get-standard-context text-width
+            |> set-font-size (size *' 0.9)
+            |> set-leading (size *' 1.2)
+            |> set-paragraph-margin (size *' 0.5) (size *' 0.5)
+      in
+      let len =
+        let (w, _, _) = get-natural-metrics ib-num in
+          footnote-indent -' w
+      in
+      let ib =
+        ib-num ++ inline-skip len ++
+          embed-block-top ctx (text-width -' footnote-indent) (fun ctx -> (
+            line-break false false ctx (read-inline ctx it ++ inline-fil)
+          ))
+      in
+        line-break false false ctx (ib ++ inline-fil)
+    in
+      FootnoteScheme.main ctx ibf bbf
+
+    let-rec fold-authors authors-text authors-list = 
+    match authors-list with
+    | [] -> authors-text
+    | author :: [] -> {#authors-text;, #author;}
+    | author :: xs -> fold-authors {#authors-text;, #author;} xs
+
+    let bib2block bib = 
+    match bib with
+    | InProceedings(p) -> 
+      let authors = 
+        match p#author with
+        | [] -> {}
+        | author :: [] -> {#author;}
+        | author :: xs -> fold-authors {#author;} xs in
+      let title = p#title in
+      let rawBooktitle = p#booktitle in
+      let year = (arabic p#year) |> embed-string in
+      let booktitle = {Proc. #rawBooktitle; #year;} in 
+      let (begin-page-int, end-page-int) = p#pages in 
+      let begin-page = embed-string (arabic begin-page-int) in
+      let end-page = embed-string (arabic end-page-int) in
+      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#booktitle;}: #begin-page;-#end-page;.}>)
+    | Article(p) -> 
+      let authors = 
+        match p#author with
+        | [] -> {}
+        | author :: [] -> {#author;}
+        | author :: xs -> fold-authors {#author;} xs in
+      let title = p#title in
+      let journal = p#journal in
+      let volume = match p#volume with
+          | Some(volume) -> embed-string (arabic volume) 
+          | None -> {} in
+      let number = Option.from {} p#number in
+      let (begin-page-int, end-page-int) = p#pages in 
+      let begin-page = embed-string (arabic begin-page-int) in
+      let end-page = embed-string (arabic end-page-int) in
+      let year = (arabic p#year) |> embed-string in
+      (p#year, '<+p-noindent{#authors;. \`\`#title;'', In \book-title{#journal;} #volume;.#number; (#year;): #begin-page;-#end-page;.} >)
+
+    let-block ctx +publications publist = 
+      let indent = 35pt in
+      let pairlstInt = List.map bib2block publist in
+      let removeDuplicatedYears (lst, latestYear) (year, it) =
+          if year <> latestYear then
+             ((arabic year |> embed-string, it) :: lst, year)
+          else
+             (({}, it) :: lst, year) in
+      let (revPairlst, _) = List.fold-left removeDuplicatedYears ([], 0) pairlstInt in
+        section-scheme ctx {Publications} '<
+          +tabbedblock ?:(indent) (List.reverse revPairlst);
+        >
 end
 
 let document = CV.document

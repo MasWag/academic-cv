@@ -9,15 +9,15 @@ document (|
   name = `Masaki Waga`;
   |) '<
   +twocolumn <
-  +description [
-    ({Work Address}, {
-    ERATO Hasuo Project
-    Palace Side Building 3F
-    Hitotsubashi 1-1-1, Chiyoda-ku,
-    Tokyo 100-1003, Japan});
-    ({Home Address}, {
-    1-60-22 Toro-Cho, Kita-Ku, Saitama-Shi
-    Saitama-Ken, 331-0804, Japan});
+  +tabbedblock ?:(60pt)[
+    ({Work Address}, '<
+    +p-noindent{ERATO Hasuo Project}
+    +p-noindent{Palace Side Building 3F}
+    +p-noindent{Hitotsubashi 1-1-1, Chiyoda-ku,}
+    +p-noindent{Tokyo 100-1003, Japan}>);
+    ({Home Address}, '<
+    +p-noindent{1-60-22 Toro-Cho, Kita-Ku, Saitama-Shi,}
+    +p-noindent{Saitama-Ken, 331-0804, Japan}>);
   ];
   > <
   +description [
@@ -65,28 +65,48 @@ document (|
     ];
    >
   +section{Employment} <
-    +tabbedblock [
-      ({Sep 2011-Now}, '<+p {
-        BSc Hons in Computer Science - The University of California, Berkeley
+    +tabbedblock ?:(45pt) [
+      ({Apr. 2018-Now}, '<+p{
+      JSPS Research Fellow (DC1)
       }>);
-      ({2001-2003}, '<
-        +p{
-          Very great school, Tokyo, Japan
-        }
-        +p {
-        \tabular(fun t -> (
-        let (c, l, r) = (t#c, t#l, t#r) in
-          [
-           [l {Automata Theory}; l {A};];
-           [l {Analysis of Hybrid Automata}; l {B};];
-          ] ))(fun xs ys -> ([]));
+      ({Apr. 2017-Now}, '<+p{
+      NII (ERATO Hasuo Project), Tokyo, Japan
+      }+p{
+      \emph{Research Assistant}
+      }>);
+      ({Dec. 2016-Mar. 2017}, '<+p{
+      The University of Tokyo, Tokyo, Japan
+      }+p{
+      \emph{Research Assistant}
+      }>);
+      ({Apr. 2016-Mar. 2018}, '<+p{
+      Level Five, Tokyo, Japan
+      }+p{
+      \emph{Software Engineer}
       }>);
     ];
-   >
-  +section{Honors} <>
-  +section{Professional Activities} <>
-  +section{Software} <>
+  >
+
+  +section{Awards} <
+    +listing-with-gap(0pt) {
+      * Best Student Award, National Institute of Informatics, September 26, 2019.
+      * Oded Maler award for the best paper, FORMATS 2019.
+      * Best paper award (jointly with Étienne André and Ichiro Hasuo), ICECCS 2018.
+    }
+  >
+ +section{Professional Activities} <
+    +listing-with-gap(0pt) {
+      * \bold{Program committee} of \emph{18th International Conference on Formal Modeling and Analysis of Timed Systems} (FORMATS 2020)
+      * \bold{Poster/Demo Program committee} of \emph{23rd ACM International Conference on Hybrid Systems: Computation and Control} (HSCC 2020)
+    }
+  >
+%  +section{Software} <>
 
   +publications(bibliography);
-  +section{Research Grants} <>
+  +section{Research Grants} <
+    +listing-with-gap(0pt) {
+      * Grant-in-Aid for JSPS Fellows, Grant Number: 18J22498, Japan Society for the Promotion of Science, FY2018–FY2020.
+      * Travel Grants from REFEC： Research Foundation for the Electrotechnology of Chubu (公益財団法人　中部電気利用基礎研究振興財団).
+    }
+  >
  >
