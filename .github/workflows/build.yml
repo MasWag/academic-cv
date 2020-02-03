@@ -18,7 +18,7 @@ jobs:
         run: |
           export HOME=/root
           eval $(opam env)
-          satysfi main.saty
+          make
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
