@@ -380,15 +380,16 @@ end = struct
     let bb-title =
       let ctx-title =
         ctx-doc
+        |> set-paragraph-margin -7.0pt 0pt
         |> set-font Latin font-latin-bold
-        |> set-font-size 20.74pt
+        |> set-font-size 20pt
         |> set-text-color slateblue
       in
       let leftf ctx it =
         line-break true true ctx
           (read-inline ctx it ++ inline-fil)
       in
-       (leftf ctx-title (embed-string title)) +++ (leftf ctx-doc {\rule(text-width)(0.5mm)(0pt)(5.0pt);})
+       (leftf ctx-title (embed-string title)) +++ (leftf ctx-title {\rule(text-width)(0.5mm)(0pt)(0pt);})
     in
 
     % -- main --
@@ -628,9 +629,9 @@ end = struct
           embed-block-top ctx ((get-text-width ctx) -' indent -' ((get-font-size ctx) *' 0.5)) (fun ctx -> read-block ctx descr)
         in
           form-paragraph ctx (br-item-pbox ++ (inline-skip ((get-font-size ctx) *' 0.5)) ++ br-pbox)
-      ) +++ block-skip ((get-font-size ctx) *' 0.1))
+      ) +++ block-skip ((get-font-size ctx) *' 0.05))
     in
-      block-skip (5pt) +++> bclst
+      block-skip (0pt) +++> bclst
 
   let-block ctx +tabbedblock ?:indentopt pairlst =
     let indent = 

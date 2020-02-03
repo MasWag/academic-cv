@@ -103,10 +103,22 @@ document (|
 %  +section{Software} <>
 
   +publications(bibliography);
+
   +section{Research Grants} <
     +listing-with-gap(0pt) {
       * Grant-in-Aid for JSPS Fellows, Grant Number: 18J22498, Japan Society for the Promotion of Science, FY2018–FY2020.
       * Travel Grants from REFEC： Research Foundation for the Electrotechnology of Chubu (公益財団法人　中部電気利用基礎研究振興財団).
     }
+  >
+
+  +section{Teaching Experiences} <
+    +tabbedblock ?:(50pt) [
+      ({Autumn 2016}, '<+p{
+      Teaching Assistant of \emph{Formal Language Theory}, The University of Tokyo
+      }>);
+      ({Summer 2016}, '<+p{
+      Teaching Assistant of \emph{Appied Logic}, The University of Tokyo
+      }>);
+    ];
   >
  >
