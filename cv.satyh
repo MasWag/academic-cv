@@ -373,7 +373,7 @@ end = struct
         |> set-font-size 10pt
         |> set-leading 18pt
         |> set-hyphen-penalty 1000
-        |> set-paragraph-margin 7pt 7pt
+        |> set-paragraph-margin 5pt 5pt
     in
 
     % -- title --
