@@ -33,7 +33,7 @@ document (|
   >
   +section{Research Interests} <
   +listing-with-gap(0pt){
-  * Lightweight verification of Cyber-physical systems
+  * Lightweight verification of black-box systems including cyber-physical systems and machine learning-based systems
   * In particular, runtime verification of real-time systems with timed automata
   * Other related problems e.g., falsification, runtime enforcement, and specification learning
   }
