@@ -1,3 +1,6 @@
+example.pdf: example.saty cv.satyh
+	satysfi $<
+
 cv_2020_Spring.pdf: cv_2020_Spring.saty bib.satyh cv.satyh
 	satysfi $<
 

@@ -2,10 +2,31 @@
 @import: cv
 @require: itemize
 @require: table
+@require: annot
 
 document (|
   name = `John Smith`;
   |) '<
+  +twocolumn ?:(0.5) <
+  +tabbedblock ?:(60pt)[
+    ({Address}, '<
+    +p-noindent{123 Broadway,}
+    +p-noindent{City, 12345}>);
+    ({Date of Birth}, '<
+    +p-noindent{${7^{th}} September 1979}>);
+    ({Nationality}, '<
+    +p-noindent{British}>);
+  ];
+  > <
+  +tabbedblock ?:(60pt) [
+    ({Home Phone}, '<
+    +p-noindent{+0 (000) 111 1111}>);
+    ({Mobile Phone}, '<
+    +p-noindent{+0 (000) 111 1112}>);
+    ({Email}, '<
+    +p-noindent{\href(`mailto:mwaga@nii.ac.jp`){mwaga\@nii.ac.jp}}>);
+    ];
+  >
   +section{Research Interests} <
   +listing-with-gap(0pt){
     * \bold{Lightweight verification} of \emph{Cyber-physical systems}.
