@@ -98,7 +98,11 @@ module CV : sig
   direct \listing-with-gap : [bool?; length; itemize] inline-cmd
   direct +enumerate-with-gap : [length; itemize] block-cmd
   direct \enumerate-with-gap : [length; itemize] inline-cmd
+  direct \promote-linebreak : [] inline-cmd
 end = struct
+
+  let-inline ctx \promote-linebreak =
+    discretionary (0-100000) inline-nil inline-nil inline-nil
 
   let slateblue = Color.rgb 0.17 0.22 0.34
 

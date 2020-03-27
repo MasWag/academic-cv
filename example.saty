@@ -27,48 +27,91 @@ document (|
     +p-noindent{\href(`mailto:mwaga@nii.ac.jp`){mwaga\@nii.ac.jp}}>);
     ];
   >
-  +section{Research Interests} <
-  +listing-with-gap(0pt){
-    * \bold{Lightweight verification} of \emph{Cyber-physical systems}.
-  }
+  +section{Personal Profile}<
+    +p-noindent {
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor sed sagittis. Cras justo lorem, volutpat mattis lacus vel, consequat aliquam quam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Integer blandit, massa at tincidunt ornare, dolor magna interdum felis, ac blandit urna neque in turpis.
+    }
   >
+
   +section{Education} <
     +tabbedblock [
-      ({2004-2007}, '<+p {
-        BSc Hons in Computer Science - The University of California, Berkeley
-      }>);
-      ({2001-2003}, '<
-        +p{
-          Very great school, Tokyo, Japan
+      ({2009-2012}, '<+p-noindent {
+        BSc Hons in Computer Science - University of Warwick, England
+      } +p-noindent {
+        First Class -80\% Average
+      } +p-noindent {
+        \emph{Third Year Project - 89\% awarded 'Project of the Year 2004'}
+      }
+      >);
+      ({2007-2009}, '<
+        +p-noindent{
+          Advanced Secondary Education - Corfe Hills School, Broadstone, Dorset, England
         }
-        +p {
+        +p-noindent {
         \tabular(fun t -> (
         let (c, l, r) = (t#c, t#l, t#r) in
           [
-           [l {Automata Theory}; l {A};];
-           [l {Analysis of Hybrid Automata}; l {B};];
+           [l {\emph{Pure Mathematics}}; l {A};];
+           [l {\emph{Statics (AS)}}; l {A};];
+           [l {\emph{Physics}}; l {A};];
+           [l {\emph{Economics}}; l {B};];
           ] ))(fun xs ys -> ([]));
       }>);
     ];
    >
 
   +section{Employment History} <
-    +tabbedblock [
-      ({Sep 2011-Present}, '<+p {
-        BSc Hons in Computer Science - The University of California, Berkeley
-      }>);
-      ({2001-2003}, '<
-        +p{
-          Very great school, Tokyo, Japan
-        }
-        +p {
-        \tabular(fun t -> (
-        let (c, l, r) = (t#c, t#l, t#r) in
-          [
-           [l {Automata Theory}; l {A};];
-           [l {Analysis of Hybrid Automata}; l {B};];
-          ] ))(fun xs ys -> ([]));
+    +tabbedblock ?:(45pt) [
+      ({Sep 2013 - Present}, '<+p-noindent {
+        Twitter, 1355 Market St, San Francisco, CA, United States
+      } +p-noindent {
+        \emph{Senior Developer / Technical Team Lead}
+      } +p-noindent {
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor sed sagittis. Cras justo lorem, volutpat mattis lacus vel, consequat aliquam quam. Interdum et malesuada fames ac ante ipsum primis in faucibus.} +p-noindent {
+        \bold{Technologies:} Ruby on Rails 2.3, Amazon EC2, NoSQL data stores, memcached, collaborative matching, Facebook Graph API.}>);
+        ({Oct 2012 - Sep 2014}, '<+p-noindent {
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor:
+      } +listing-with-gap (0pt) {
+        * Designing and developing an enterprise ASP.NET application for generic reporting, with a transactional COM+ serviced component middle-tier, and secure data access layer.
+        * Working with the finance department to produce useful reports from complex data models.
+      } +p-noindent {
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor sed sagittis.
       }>);
     ];
+   >
+
+   % +section{Software Engineering Skills} <
+   % +listing-with-gap (0pt) {
+   % * \bold{Programming Languages} \promote-linebreak;
+   %   \emph{Ruby} - MRI 1.8.7, 1.9.2 \promote-linebreak;
+   %   \emph{ASP.NET, C\#, VB.NET} \promote-linebreak;
+   %   \emph{PHP} \promote-linebreak;
+   %   \emph{Java/Scala}
+   % }
+   % >
+   +section{Interests} <
+   +listing-with-gap (0pt) {
+   * \bold{Badminton, Tennis, Running, Cycling, Sailing}
+   * \bold{Travelling}
+   * \bold{Creative Writing}
+   * \bold{Photography}
+   * \bold{Car Mechanics}
+   }
+   >
+   +section{Interests} <
+    +twocolumn ?:(0.5) <
+      +tabbedblock ?:(60pt)[
+        ({Name}, '<+p-noindent{Bill Lumbergh}>);
+        ({Company}, '<+p-noindent{Initech Inc.}>);
+        ({Position}, '<+p-noindent{Vice President}>);
+        ({Contact}, '<+p-noindent{bill\@initech.com}>);
+  ];
+  > < +tabbedblock ?:(60pt) [
+        ({Name}, '<+p-noindent{Michael "Big Mike" Tucker}>);
+        ({Company}, '<+p-noindent{Burbank Buy More}>);
+        ({Position}, '<+p-noindent{Store Manager}>);
+        ({Contact}, '<+p-noindent{mike\@buymore.com}>);
+    ];
+   > 
    >
  >
