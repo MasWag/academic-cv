@@ -35,6 +35,8 @@ type bib-item =
   | InProceedings of bib-in-proceedings
   | Article       of bib-article
 
+type skill-group =
+  | SkillGroup of inline-text * inline-text list
 
 let string-to-int str =
     let-rec string-to-list-args str ls =
@@ -99,6 +101,8 @@ module CV : sig
   direct +enumerate-with-gap : [length; itemize] block-cmd
   direct \enumerate-with-gap : [length; itemize] inline-cmd
   direct \promote-linebreak : [] inline-cmd
+
+  direct +skill-groups : [skill-group list] block-cmd
 end = struct
 
   let-inline ctx \promote-linebreak =
@@ -581,6 +585,28 @@ end = struct
       inline-fil ++ embed-block-breakable ctx (listing break ctx outer-gap item)
         ++ omit-skip-after
 
+  let skill-group ctx (SkillGroup(title, body)) = 
+    let color = get-text-color ctx in
+    let ib-bullet = inline-graphics 8pt 8pt 0pt (bullet color) ++ inline-skip 8pt in
+    let bullet-width = get-natural-width ib-bullet in
+    let pads = (bullet-width, 0pt, 0pt, 0pt) in
+    let decos =
+      let deco _ _ _ _ = [] in
+        (deco, deco, deco, deco)
+      in
+      let bb-title =
+        form-paragraph ctx
+            (ib-bullet ++ read-inline ctx {\bold{#title;}} ++ inline-fil) in
+      let bb-body =
+        List.map (fun body -> 
+          form-paragraph ctx
+            (inline-skip bullet-width ++ (read-inline ctx body) ++ inline-fil)
+          ) body in
+        List.fold-left (+++) bb-title bb-body
+
+  let-block ctx +skill-groups item =
+      List.map (skill-group ctx) item |> 
+        List.fold-left (+++) block-nil
 
   let-rec enumerate-item : int -> context -> int -> itemize -> block-boxes
     | index ctx depth (Item(parent, _)) =

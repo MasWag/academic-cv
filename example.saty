@@ -80,15 +80,27 @@ document (|
     ];
    >
 
-   % +section{Software Engineering Skills} <
-   % +listing-with-gap (0pt) {
-   % * \bold{Programming Languages} \promote-linebreak;
-   %   \emph{Ruby} - MRI 1.8.7, 1.9.2 \promote-linebreak;
-   %   \emph{ASP.NET, C\#, VB.NET} \promote-linebreak;
-   %   \emph{PHP} \promote-linebreak;
-   %   \emph{Java/Scala}
-   % }
-   % >
+   +section{Software Engineering Skills} <
+   +skill-groups [
+   SkillGroup({Programming Languages}, [
+              {\emph{Ruby} - MRI 1.8.7, 1.9.2};
+              {\emph{ASP.NET, C\#, VB.NET}};
+              {\emph{PHP}};
+              {\emph{Java/Scala}}]);
+   SkillGroup({Web Development}, [
+              {\emph{HTML5, CSS3/SASS, JavaScript/CoffeeScript/jQuery}};
+              {\emph{Ruby on Rails v3.1}};
+              {\emph{Test:Unit, RSpec, Cucumber, Selenium} - automated testing frameworks};
+              {\emph{Apache/Nginx Web Servers}}]);
+   SkillGroup({Miscellaneous}, [
+              {\emph{Microsoft SQL Server 2000/2005} - database architecture and administration};
+              {\emph{Transact-SQL} - data definition and manipulation};
+              {\emph{SQL Profiler} - performance tuning and debugging};
+              {\emph{MySQL Server}};
+              {\emph{CVS, DARCS, git} - source version control}])
+   ];
+   >
+   
    +section{Interests} <
    +listing-with-gap (0pt) {
    * \bold{Badminton, Tennis, Running, Cycling, Sailing}
