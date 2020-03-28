@@ -71,11 +71,11 @@ document (|
         \bold{Technologies:} Ruby on Rails 2.3, Amazon EC2, NoSQL data stores, memcached, collaborative matching, Facebook Graph API.}>);
         ({Oct 2012 - Sep 2014}, '<+p-noindent {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor:
-      } +listing-with-gap (0pt) {
-        * Designing and developing an enterprise ASP.NET application for generic reporting, with a transactional COM+ serviced component middle-tier, and secure data access layer.
-        * Working with the finance department to produce useful reports from complex data models.
-      } +p-noindent {
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor sed sagittis.
+        \listing-with-gap (0pt) {
+          * Designing and developing an enterprise ASP.NET application for generic reporting, with a transactional COM+ serviced component middle-tier, and secure data access layer.
+          * Working with the finance department to produce useful reports from complex data models.
+        }
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum nec dolor sed sagittis.
       }>);
     ];
    >
@@ -110,7 +110,7 @@ document (|
    * \bold{Car Mechanics}
    }
    >
-   +section{Interests} <
+   +section{Referees} <
     +twocolumn ?:(0.5) <
       +tabbedblock ?:(60pt)[
         ({Name}, '<+p-noindent{Bill Lumbergh}>);
