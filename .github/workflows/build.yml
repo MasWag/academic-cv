@@ -16,14 +16,16 @@ jobs:
         run: apt install libsaxon-java -y
       - name: Install font
         run: |
-          opam init
+          export HOME=/root
+          eval $(opam env)
+          opam update
           opam install satysfi-fonts-asana-math
           satyrographos install
       - name: Build with SATySFi
         run: |
           export HOME=/root
           eval $(opam env)
-          make
+          satysfi example.saty
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
