@@ -39,7 +39,7 @@
   </xsl:copy>
 </xsl:template>
 
-<xsl:template match="inproceedings">
+<xsl:template match="inproceedings[not(contains(@publtype, 'toappear'))]">
   (InProceedings(|
     author = {|<xsl:apply-templates select="./author" />|};
     title = {<xsl:value-of select="normalize-space(./title)" />};
@@ -47,18 +47,33 @@
     series = None; <!-- TODO: Perhaps this is available in crossref -->
     volume = None; <!-- TODO: Perhaps this is available in crossref -->
     number = None; <!-- TODO: Perhaps this is available in crossref -->
-    pages = (<xsl:value-of select="translate(normalize-space(./pages),'-',',')" />);
+    pages = (`<xsl:value-of select="substring-before(./pages, '-')" />`, `<xsl:value-of select="substring-after(./pages, '-')" />`);
     year = <xsl:value-of select="normalize-space(./year)" />;
   |));
 </xsl:template>
-<xsl:template match="article">
+<xsl:template match="inproceedings[contains(@publtype, 'toappear')]">
+  (ToAppear(|
+    author = {|<xsl:apply-templates select="./author" />|};
+    title = {<xsl:value-of select="normalize-space(./title)" />};
+    booktitle = {<xsl:value-of select="normalize-space(./booktitle)" />};
+    year = <xsl:value-of select="normalize-space(./year)" />;
+  |));
+</xsl:template>
+<xsl:template match="article[not(contains(@publtype, 'underreview'))]">
   (Article(|
     author = {|<xsl:apply-templates select="./author" />|};
     title = {<xsl:value-of select="normalize-space(./title)" />};
     journal = {<xsl:value-of select="normalize-space(./journal)" />};
     volume = <xsl:if test="./volume">Some(<xsl:value-of select="normalize-space(./volume)" />)</xsl:if><xsl:if test="not(./volume)">None</xsl:if>;
     number = <xsl:if test="./number">Some({<xsl:value-of select="normalize-space(./number)" />})</xsl:if><xsl:if test="not(./number)">None</xsl:if>;
-    pages = (<xsl:value-of select="translate(normalize-space(./pages),'-',',')" /><xsl:if test="not(./pages)">0,0</xsl:if>);
+    pages = (`<xsl:value-of select="substring-before(./pages, '-')" />`, `<xsl:value-of select="substring-after(./pages, '-')" />`);
+    year = <xsl:value-of select="normalize-space(./year)" />;
+  |));
+</xsl:template>
+<xsl:template match="article[contains(@publtype, 'underreview')]">
+  (UnderReview(|
+    author = {|<xsl:apply-templates select="./author" />|};
+    title = {<xsl:value-of select="normalize-space(./title)" />};
     year = <xsl:value-of select="normalize-space(./year)" />;
   |));
 </xsl:template>
