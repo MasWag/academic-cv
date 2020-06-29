@@ -15,9 +15,7 @@ document (|
     +p-noindent{Palace Side Building 3F}
     +p-noindent{Hitotsubashi 1-1-1, Chiyoda-ku,}
     +p-noindent{Tokyo 100-1003, Japan}>);
-    ({Home Address}, '<
-    +p-noindent{1-60-22 Toro-Cho, Kita-Ku, Saitama-Shi,}
-    +p-noindent{Saitama-Ken, 331-0804, Japan}>);
+    ({}, '<>)
   ];
   > <
   +description [
@@ -27,8 +25,6 @@ document (|
     Japan});
     ({Phone}, {
     +81 70 2151 8092});
-    ({Email}, {
-    \href(`mailto:mwaga@nii.ac.jp`){mwaga\@nii.ac.jp}});
     ];
   >
   +section{Research Interests} <
@@ -64,6 +60,7 @@ document (|
         }>);
     ];
    >
+
   +section{Employment} <
     +tabbedblock ?:(45pt) [
       ({Apr. 2018-Now}, '<+p{
